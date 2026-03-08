@@ -2048,6 +2048,18 @@
             const account = document.getElementById('mcp-account');
             const lastCheck = document.getElementById('mcp-last-check');
             
+            // 检查是否在本地环境
+            const isLocal = window.location.hostname === 'localhost';
+            if (!isLocal) {
+                dot.classList.remove('online');
+                title.textContent = '远程部署';
+                desc.textContent = '小红书 MCP 服务仅在本地可用';
+                account.textContent = '-';
+                lastCheck.textContent = new Date().toLocaleTimeString('zh-CN');
+                if (!silent) addLog('MCP 服务: 远程部署模式，发布功能不可用');
+                return false;
+            }
+            
             try {
                 const response = await fetch('http://localhost:18060/health');
                 const data = await response.json();
