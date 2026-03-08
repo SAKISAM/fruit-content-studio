@@ -7,6 +7,8 @@ export const config = {
       sizeLimit: '10mb', // 增加请求体大小限制到 10MB
     },
   },
+  maxDuration: 60, // 最大执行时间 60 秒
+  memory: 3008, // 增加内存到 3008MB (最大可用)
 };
 
 const YUNWU_API_BASE = "https://yunwu.ai/v1";
