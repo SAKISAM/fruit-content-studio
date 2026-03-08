@@ -1320,7 +1320,7 @@
                         await new Promise(r => setTimeout(r, 5000)); // 5秒轮询
                         
                         // 使用 Kie.ai 官方 recordInfo 端点查询
-                        const queryRes = await fetch(`${KIE_API_BASE}/api/v1/jobs/recordInfo?taskId=${taskId}`, {
+                        const queryRes = await fetch(`${API_PROXY}/record?taskId=${taskId}`, {
                             headers: {
                                 'Authorization': `Bearer ${apiKey}`,
                                 'Content-Type': 'application/json'
@@ -1538,10 +1538,8 @@
         
         // Banana 2 API 调用
         async function generateImagesWithBanana2(tasks, apiKey, referenceImages) {
-            // 使用 Vercel 代理或直连（根据环境）
-            const isLocal = window.location.hostname === 'localhost';
-            const KIE_API_BASE = isLocal ? 'https://api.kie.ai' : '/api/proxy/kie';
-            const KIE_UPLOAD_BASE = isLocal ? 'https://kieai.redpandaai.co' : '/api/proxy/kie';
+            // 始终使用 Vercel 代理
+            const API_PROXY = '/api/proxy/kie';
             
             // 获取配置
             const resolution = document.getElementById('img-resolution').value || '2K';
@@ -1576,7 +1574,7 @@
                                 throw new Error(`图片 ${refImage.name} 没有 dataUrl`);
                             }
                             
-                            const uploadRes = await fetch(isLocal ? `${KIE_UPLOAD_BASE}/api/file-base64-upload` : '/api/proxy/kie/upload', {
+                            const uploadRes = await fetch(`${API_PROXY}/upload`, {
                                 method: 'POST',
                                 headers: {
                                     'Authorization': `Bearer ${apiKey}`,
@@ -1627,7 +1625,7 @@
                     
                     addImageGenLog(`🔍 完整的 payload: ${JSON.stringify(payload).substring(0, 500)}...`);
                     
-                    const submitRes = await fetch(isLocal ? `${KIE_API_BASE}/api/v1/jobs/createTask` : '/api/proxy/kie/images/generations', {
+                    const submitRes = await fetch(`${API_PROXY}/images/generations`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${apiKey}`,
@@ -1656,7 +1654,7 @@
                         await new Promise(r => setTimeout(r, 5000)); // 5秒轮询
                         
                         // 使用正确的端点查询任务状态
-                        const queryRes = await fetch(isLocal ? `${KIE_API_BASE}/api/v1/jobs/recordInfo?taskId=${taskId}` : `/api/proxy/kie/record?taskId=${taskId}`, {
+                        const queryRes = await fetch(`${API_PROXY}/record?taskId=${taskId}`, {
                             headers: {
                                 'Authorization': `Bearer ${apiKey}`,
                                 'Content-Type': 'application/json'
