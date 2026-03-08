@@ -1673,6 +1673,9 @@
                     };
                     
                     addImageGenLog(`🔍 完整的 payload: ${JSON.stringify(payload).substring(0, 500)}...`);
+                    addImageGenLog(`🔍 请求 URL: ${API_PROXY}/images/generations`);
+                    addImageGenLog(`🔍 请求方法: POST`);
+                    addImageGenLog(`🔍 请求头: Content-Type=application/json, Authorization=Bearer ***`);
                     
                     const submitRes = await fetch(`${API_PROXY}/images/generations`, {
                         method: 'POST',
