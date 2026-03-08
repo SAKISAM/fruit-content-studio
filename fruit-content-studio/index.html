@@ -1113,15 +1113,7 @@
             saveToStorage(STORAGE_KEYS.REFERENCE_IMAGES, referenceImages);
         }
         
-        // 加载参考图片
-        function loadReferenceImages() {
-            const saved = loadFromStorage(STORAGE_KEYS.REFERENCE_IMAGES, []);
-            referenceImages = saved;
-            renderReferenceImages();
-            if (referenceImages.length > 0) {
-                addLog(`已加载 ${referenceImages.length} 张参考图片`);
-            }
-        }
+        // 旧的 localStorage 加载函数已废弃，使用 IndexedDB 版本
         
         // 保存 Prompt 库
         function savePromptLibraries() {
