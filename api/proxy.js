@@ -44,8 +44,15 @@ export default async function handler(req, res) {
       
     } else if (path === '/kie/images/generations') {
       // Kie.ai 图像生成代理
-      const { model, prompt, image_input, resolution, aspect_ratio } = req.body;
+      console.log('[Proxy] Request body:', JSON.stringify(req.body));
+      
+      const { model, prompt, image_input, resolution, aspect_ratio } = req.body || {};
       const authHeader = req.headers.authorization || '';
+      
+      if (!prompt) {
+        console.error('[Proxy] Missing prompt in request body');
+        return res.status(400).json({ error: 'Missing prompt' });
+      }
       
       const payload = {
         model: model || 'nano-banana-2',
@@ -61,6 +68,8 @@ export default async function handler(req, res) {
       if (image_input && image_input.length > 0) {
         payload.input.image_input = image_input;
       }
+      
+      console.log('[Proxy] Sending to Kie.ai:', JSON.stringify(payload));
       
       const response = await fetch(`${KIE_API_BASE}/api/v1/jobs/createTask`, {
         method: 'POST',
