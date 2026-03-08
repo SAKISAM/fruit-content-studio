@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const path = req.url.replace('/api/proxy', '');
+  const path = req.url.replace('/api/proxy', '').split('?')[0];
   
   try {
     if (path === '/images/generations' || path === '/chat/completions') {
