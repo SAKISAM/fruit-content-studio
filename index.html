@@ -1672,10 +1672,11 @@
                         }
                     };
                     
-                    addImageGenLog(`🔍 完整的 payload: ${JSON.stringify(payload).substring(0, 500)}...`);
+                    addImageGenLog(`🔍 完整的 payload: ${JSON.stringify(payload)}`);
                     addImageGenLog(`🔍 请求 URL: ${API_PROXY}/images/generations`);
-                    addImageGenLog(`🔍 请求方法: POST`);
-                    addImageGenLog(`🔍 请求头: Content-Type=application/json, Authorization=Bearer ***`);
+                    addImageGenLog(`🔍 API Key: ${apiKey ? apiKey.substring(0, 10) + '...' : 'EMPTY'}`);
+                    addImageGenLog(`🔍 prompt: ${prompt}`);
+                    addImageGenLog(`🔍 imageUrls: ${JSON.stringify(imageUrls)}`);
                     
                     const submitRes = await fetch(`${API_PROXY}/images/generations`, {
                         method: 'POST',
