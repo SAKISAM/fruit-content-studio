@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍎 水果店内容生产工作室</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        /* 布局 */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 260px;
+            background: #1a1a2e;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-header p {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 4px;
+        }
+        
+        .nav-menu {
+            padding: 16px 12px;
+            flex: 1;
+        }
+        
+        .nav-section {
+            margin-bottom: 8px;
+        }
+        
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            padding: 12px 12px 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .nav-badge {
+            margin-left: auto;
+            background: #ff4757;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        /* 主内容区 */
+        .main {
+            flex: 1;
+            margin-left: 260px;
+            padding: 24px;
+        }
+        
+        .page {
+            display: none;
+            max-width: 1000px;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .page-header {
+            margin-bottom: 24px;
+        }
+        
+        .page-header h2 {
+            font-size: 1.5rem;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        
+        .page-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* 卡片 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* 表单 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf1;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        /* 按钮 */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e4e6e9;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+        
+        /* 参考库 */
+        .library-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+        }
+        
+        .library-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            text-align: center;
+            position: relative;
+        }
+        
+        .library-item:hover {
+            border-color: #667eea;
+        }
+        
+        .library-item-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e8ecf1;
+        }
+        
+        .library-item-btn {
+            flex: 1;
+            padding: 6px 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        
+        .library-item-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .library-item-btn.edit {
+            background: #f0f2f5;
+            color: #333;
+        }
+        
+        .library-item-btn.edit:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .library-item-btn.delete {
+            background: #f0f2f5;
+            color: #333;
+        }
+        
+        .library-item-btn.delete:hover {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .library-item-add {
+            border: 2px dashed #ccc;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        
+        .library-item-add:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.02);
+        }
+        
+        .library-item.image-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .library-item.text-item {
+            font-size: 0.8rem;
+            color: #333;
+            text-align: left;
+        }
+        
+        .library-item-name {
+            font-size: 0.75rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 草稿箱 */
+        .draft-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .draft-column {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .draft-column h4 {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            color: #333;
+        }
+        
+        .draft-item {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .draft-item:hover {
+            border-color: #667eea;
+        }
+        
+        .draft-item.selected {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .draft-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .draft-item-text {
+            font-size: 0.8rem;
+            color: #333;
+            line-height: 1.5;
+            max-height: 80px;
+            overflow: hidden;
+        }
+        
+        .draft-checkbox {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .match-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 16px;
+        }
+        
+        /* 待发布 */
+        .publish-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .publish-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e8ecf1;
+            transition: all 0.2s;
+        }
+        
+        .publish-item:hover {
+            border-color: #667eea;
+        }
+        
+        .publish-item.selected {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .publish-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .publish-content {
+            padding: 16px;
+        }
+        
+        .publish-text {
+            font-size: 0.85rem;
+            color: #333;
+            line-height: 1.6;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        
+        /* MCP 状态 */
+        .status-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .status-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ff4757;
+        }
+        
+        .status-indicator.online {
+            background: #43e97b;
+        }
+        
+        .status-info h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        
+        .status-info p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* 日志 */
+        .log-console {
+            background: #1a1a2e;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        
+        .log-time {
+            color: #888;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+            .main {
+                margin-left: 0;
+            }
+            .draft-grid,
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🍎 水果店工作室</h1>
+                <p>内容生产流水线</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <div class="nav-section-title">生成</div>
+                    <div class="nav-item active" onclick="switchPage('image-gen')">
+                        <span class="nav-icon">🖼️</span>
+                        <span>图像生成</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('text-gen')">
+                        <span class="nav-icon">✍️</span>
+                        <span>文本生成</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">管理</div>
+                    <div class="nav-item" onclick="switchPage('drafts')">
+                        <span class="nav-icon">📝</span>
+                        <span>草稿箱</span>
+                        <span class="nav-badge" id="draft-badge">0</span>
+                    </div>
+                    <div class="nav-item" onclick="switchPage('publish')">
+                        <span class="nav-icon">📤</span>
+                        <span>待发布</span>
+                        <span class="nav-badge" id="publish-badge">0</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">配置</div>
+                    <div class="nav-item" onclick="switchPage('mcp-config')">
+                        <span class="nav-icon">⚙️</span>
+                        <span>小红书 MCP</span>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- 主内容 -->
+        <main class="main">
+            <!-- 1. 图像生成 -->
+            <div class="page active" id="page-image-gen">
+                <div class="page-header">
+                    <h2>🖼️ 图像生成</h2>
+                    <p>配置 API 参数，生成水果店宣传图片</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🔧 API 配置</div>
+                    <div class="form-group">
+                        <label>API 提供商</label>
+                        <select id="img-api-provider" onchange="switchImageProvider()">
+                            <option value="banana2" selected>🍌 Banana 2 (Nano Banana)</option>
+                            <option value="kie">Kie.ai</option>
+                            <option value="yunwu">云雾 API (OpenAI 格式)</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>请求地址</label>
+                            <input type="text" id="img-api-url" value="https://api.kie.ai" placeholder="https://api.kie.ai" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="password" id="img-api-key" value="5d361b9ff2cabf7089701ad9b7eb76e7" placeholder="sk-...">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>模型</label>
+                            <input type="text" id="img-model" value="nano-banana-2" placeholder="nano-banana-2" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>分辨率</label>
+                            <select id="img-resolution">
+                                <option value="1K">1K (最快)</option>
+                                <option value="2K" selected>2K (推荐)</option>
+                                <option value="4K">4K (最高质量)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>宽高比</label>
+                            <select id="img-aspect-ratio">
+                                <option value="auto" selected>自动</option>
+                                <option value="1:1">1:1 正方形</option>
+                                <option value="16:9">16:9 宽屏</option>
+                                <option value="9:16">9:16 竖屏</option>
+                                <option value="4:3">4:3</option>
+                                <option value="3:4">3:4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>生成数量</label>
+                            <input type="number" id="img-count" value="4" min="1" max="10">
+                        </div>
+                    </div>
+                    <div style="background: #e8f5e9; border-radius: 8px; padding: 12px; margin-top: 12px; font-size: 0.85rem; color: #2e7d32;">
+                        <strong>🍌 Banana 2 配置说明:</strong> 
+                        <span id="api-hint">支持文生图和图生图，参考图片会自动上传并用于生成</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🎨 Prompt 指令</div>
+                    <div class="form-group" style="position: relative;">
+                        <textarea id="img-prompt" placeholder="输入图像生成 prompt：
+
+示例：
+精美水果礼盒，包含红苹果、青提、橙子等多种水果，白色背景，专业摄影风格，高清细节，4K质量
+
+💡 提示：点击下方「📎 插入参考图」按钮，选择图片自动插入到光标位置"></textarea>
+                        
+                        <!-- 图片选择器触发按钮 -->
+                        <button type="button" class="btn btn-secondary btn-sm" style="position: absolute; bottom: 12px; right: 12px;" onclick="toggleImagePicker()">
+                            📎 插入参考图
+                        </button>
+                        
+                        <!-- 浮动图片选择器 -->
+                        <div id="image-picker-popup" style="display: none; position: absolute; bottom: 50px; right: 12px; background: white; border: 1px solid #e8ecf1; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 16px; width: 320px; max-height: 400px; overflow-y: auto; z-index: 100;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e8ecf1;">
+                                <span style="font-weight: 600; font-size: 0.9rem;">📁 参考图片库</span>
+                                <button type="button" onclick="toggleImagePicker()" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666;">×</button>
+                            </div>
+                            <div id="image-picker-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                                <!-- 动态加载 -->
+                            </div>
+                            <div id="image-picker-empty" style="text-align: center; padding: 20px; color: #999; font-size: 0.85rem; display: none;">
+                                暂无参考图片<br>
+                                <span style="font-size: 0.75rem;">先去下方上传一些参考图</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateImages()" id="img-gen-btn">
+                        🚀 开始生成图片
+                    </button>
+                </div>
+                
+                <div class="card" id="img-gen-log-card" style="display: none;">
+                    <div class="card-title">📋 运行日志</div>
+                    <div class="log-console" id="img-gen-log" style="max-height: 300px;">
+                        <!-- 动态添加日志 -->
+                    </div>
+                    <div id="img-gen-progress" style="margin-top: 12px; display: none;">
+                        <div style="background: #e8ecf1; border-radius: 4px; height: 8px; overflow: hidden;">
+                            <div id="img-gen-progress-bar" style="background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                        </div>
+                        <div style="text-align: center; margin-top: 8px; font-size: 0.85rem; color: #666;">
+                            <span id="img-gen-progress-text">0/0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📚 参考 Prompt 指令库</div>
+                    <div class="library-grid" id="prompt-library">
+                        <!-- 动态加载 -->
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📁 参考图片资料库</div>
+                    <div class="library-grid" id="image-library">
+                        <!-- 动态加载 -->
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">➕ 手动添加图片到草稿箱</div>
+                    <div class="form-group">
+                        <label>图片 URL</label>
+                        <input type="text" id="manual-image-url" placeholder="粘贴图片URL，例如: https://example.com/image.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label>Prompt 描述（可选）</label>
+                        <input type="text" id="manual-image-prompt" placeholder="描述这张图片的内容">
+                    </div>
+                    <button class="btn btn-secondary" onclick="addManualImageToDrafts()">
+                        📥 添加到草稿箱
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 2. 文本生成 -->
+            <div class="page" id="page-text-gen">
+                <div class="page-header">
+                    <h2>✍️ 文本生成</h2>
+                    <p>配置 API 参数，生成小红书推广文案</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🔧 API 配置</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>请求地址</label>
+                            <input type="text" id="text-api-url" value="https://yunwu.ai/v1/chat/completions" placeholder="https://api.example.com/v1/chat">
+                        </div>
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="password" id="text-api-key" value="sk-GhxMcvRxdj5ASJriCAbQ7iEwdWCIZgxtM7Bqanup0j0rcFs6" placeholder="sk-...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>模型</label>
+                        <input type="text" id="text-model" value="doubao-seed-1-6-flash-250828" placeholder="模型名称">
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📝 Prompt 指令</div>
+                    <div class="form-group">
+                        <textarea id="text-prompt" placeholder="输入文案生成 prompt：
+
+示例：
+写一个关于进口车厘子促销的小红书文案，强调新鲜度和价格优势，吸引用户下单。要求：开头有钩子、内容真实、使用emoji、结尾引导互动、添加话题标签。"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateTexts()">
+                        ✨ 开始生成文案
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📚 参考 Prompt 指令库</div>
+                    <div class="library-grid" id="text-prompt-library">
+                        <!-- 动态加载 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. 草稿箱 -->
+            <div class="page" id="page-drafts">
+                <div class="page-header">
+                    <h2>📝 草稿箱</h2>
+                    <p>选择图片和文案进行匹配组合</p>
+                </div>
+                
+                <div class="draft-grid">
+                    <!-- 已生成图片 -->
+                    <div class="draft-column">
+                        <h4>🖼️ 已生成图片 (<span id="draft-images-count">0</span>)</h4>
+                        <div id="draft-images-list">
+                            <div style="text-align: center; padding: 40px; color: #999;">
+                                <p>暂无图片</p>
+                                <p style="font-size: 0.85rem; margin-top: 8px;">去"图像生成"页面创建</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 已生成文案 -->
+                    <div class="draft-column">
+                        <h4>✍️ 已生成文案 (<span id="draft-texts-count">0</span>)</h4>
+                        <div id="draft-texts-list">
+                            <div style="text-align: center; padding: 40px; color: #999;">
+                                <p>暂无文案</p>
+                                <p style="font-size: 0.85rem; margin-top: 8px;">去"文本生成"页面创建</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="match-controls">
+                    <button class="btn btn-secondary" onclick="clearSelection()">清空选择</button>
+                    <button class="btn btn-primary" onclick="previewMatch()">👁️ 预览匹配</button>
+                    <button class="btn btn-success" onclick="confirmMatch()">✅ 确认组合</button>
+                </div>
+                
+                <div id="match-preview" class="card" style="display: none;">
+                    <div class="card-title">预览组合结果</div>
+                    <div id="match-preview-content"></div>
+                </div>
+            </div>
+            
+            <!-- 4. 待发布 -->
+            <div class="page" id="page-publish">
+                <div class="page-header">
+                    <h2>📤 待发布</h2>
+                    <p>选择要发布到小红书的内容</p>
+                </div>
+                
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <span style="font-weight: 600;">已组合素材: <span id="publish-total">0</span> 组</span>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary btn-sm" onclick="selectAllPublish()">全选</button>
+                            <button class="btn btn-success btn-sm" onclick="publishToXiaohongshu()">📤 发布到小红书</button>
+                        </div>
+                    </div>
+                    
+                    <div class="publish-grid" id="publish-list">
+                        <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #999;">
+                            <p>暂无待发布内容</p>
+                            <p style="font-size: 0.9rem; margin-top: 8px;">去"草稿箱"页面组合素材</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 5. 小红书 MCP 配置 -->
+            <div class="page" id="page-mcp-config">
+                <div class="page-header">
+                    <h2>⚙️ 小红书 MCP 配置</h2>
+                    <p>查看和管理小红书 MCP 服务状态</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📡 服务状态</div>
+                    <div class="status-card">
+                        <div class="status-indicator" id="mcp-status-dot"></div>
+                        <div class="status-info">
+                            <h4 id="mcp-status-title">正在检查...</h4>
+                            <p id="mcp-status-desc">请稍候</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="checkMcpStatus()">🔄 刷新状态</button>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 16px; margin-top: 16px;">
+                        <h4 style="margin-bottom: 12px; font-size: 0.9rem;">服务信息</h4>
+                        <div style="display: grid; grid-template-columns: 100px 1fr; gap: 8px; font-size: 0.85rem;">
+                            <span style="color: #666;">服务地址:</span>
+                            <span>http://localhost:18060</span>
+                            <span style="color: #666;">登录账号:</span>
+                            <span id="mcp-account">-</span>
+                            <span style="color: #666;">最后检查:</span>
+                            <span id="mcp-last-check">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🚀 启动/重启服务</div>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 16px;">
+                        如果服务未运行，请在终端执行以下命令：
+                    </p>
+                    <div class="log-console" style="margin-bottom: 16px;">
+                        <div class="log-entry">cd ~/.openclaw/workspace/skills/xiaohongshu-mcp</div>
+                        <div class="log-entry">./xiaohongshu-mcp-darwin-arm64</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="startMcpServer()">
+                        ▶️ 在终端启动服务
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📋 使用说明</div>
+                    <div style="font-size: 0.9rem; color: #333; line-height: 1.8;">
+                        <p><strong>首次使用：</strong></p>
+                        <ol style="margin-left: 20px; margin-bottom: 16px;">
+                            <li>下载 MCP 服务端程序（已完成）</li>
+                            <li>运行登录工具扫码登录小红书</li>
+                            <li>启动 MCP 服务并保持运行</li>
+                            <li>在本页面确认服务状态为"在线"</li>
+                        </ol>
+                        <p><strong>注意事项：</strong></p>
+                        <ul style="margin-left: 20px;">
+                            <li>登录后不要在其他浏览器登录同一账号</li>
+                            <li>MCP 服务需要保持运行才能发布内容</li>
+                            <li>如遇到问题请重启服务并重新登录</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <input type="file" id="ref-image-upload" accept="image/*" style="display: none;" onchange="handleRefImageUpload(event)">
+
+    <script>
+        // 全局状态
+        let generatedImages = [];
+        let generatedTexts = [];
+        let referenceImages = [];
+        let selectedDraftImages = new Set();
+        let selectedDraftTexts = new Set();
+        let matchedPairs = [];
+        let selectedPublishItems = new Set();
+        
+        // 光标位置记录
+        let lastCursorPosition = 0;
+        
+        // Prompt 库数据
+        let imagePromptLibrary = [
+            { id: 1, name: '🎁 水果礼盒模板', content: '精美水果礼盒，包含红苹果、青提、橙子等多种水果，白色背景，专业摄影风格，高清细节' },
+            { id: 2, name: '☀️ 夏日清爽果篮', content: '夏日清爽果篮，西瓜、哈密瓜、葡萄等热带水果，竹编篮子，自然光线，清新风格' },
+            { id: 3, name: '🌿 有机健康系列', content: '有机健康水果系列，绿色背景，新鲜有机苹果、蓝莓、草莓，自然光，健康生活方式' },
+            { id: 4, name: '🎉 节日限定款', content: '节日限定水果礼盒，精美包装，红色丝带装饰，多种高端水果组合，节日氛围' }
+        ];
+        
+        let textPromptLibrary = [
+            { id: 1, name: '💰 促销推广', content: '写一个关于水果店限时促销的小红书文案，强调价格优势和新鲜度，吸引用户下单' },
+            { id: 2, name: '🌱 种草推荐', content: '写一篇水果种草文案，分享真实购买体验，突出水果品质和口感，适合小红书风格' },
+            { id: 3, name: '🎊 节日营销', content: '写一个节日主题水果礼盒推广文案，强调送礼场景和心意表达' },
+            { id: 4, name: '📖 水果科普', content: '写一篇水果科普文案，介绍某种水果的营养价值和挑选技巧' }
+        ];
+        
+        // ========== IndexedDB 存储管理 ==========
+        const DB_NAME = 'FruitContentStudio';
+        const DB_VERSION = 1;
+        let db = null;
+
+        // 初始化 IndexedDB
+        async function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    // 创建存储对象
+                    if (!db.objectStoreNames.contains('referenceImages')) {
+                        db.createObjectStore('referenceImages', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('promptLibrary')) {
+                        db.createObjectStore('promptLibrary', { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains('generatedContent')) {
+                        db.createObjectStore('generatedContent', { keyPath: 'id' });
+                    }
+                };
+            });
+        }
+
+        // 保存到 IndexedDB
+        async function saveToDB(storeName, data) {
+            if (!db) await initDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(data);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 从 IndexedDB 读取
+        async function loadFromDB(storeName, id) {
+            if (!db) await initDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = id ? store.get(id) : store.getAll();
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // 从 IndexedDB 删除
+        async function deleteFromDB(storeName, id) {
+            if (!db) await initDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ========== 本地存储管理（兼容层）==========
+        const STORAGE_KEYS = {
+            REFERENCE_IMAGES: 'fruitStudio_referenceImages',
+            IMAGE_PROMPT_LIBRARY: 'fruitStudio_imagePromptLibrary',
+            TEXT_PROMPT_LIBRARY: 'fruitStudio_textPromptLibrary',
+            GENERATED_IMAGES: 'fruitStudio_generatedImages',
+            GENERATED_TEXTS: 'fruitStudio_generatedTexts',
+            MATCHED_PAIRS: 'fruitStudio_matchedPairs'
+        };
+        
+        // 保存到 IndexedDB（参考图片专用）
+        async function saveReferenceImages() {
+            if (!db) await initDB();
+            // 保存每张图片为独立记录
+            for (const img of referenceImages) {
+                await saveToDB('referenceImages', img);
+            }
+            console.log(`已保存 ${referenceImages.length} 张参考图片到 IndexedDB`);
+        }
+        
+        // 从 IndexedDB 加载参考图片
+        async function loadReferenceImages() {
+            if (!db) await initDB();
+            try {
+                const saved = await loadFromDB('referenceImages');
+                referenceImages = saved || [];
+                renderReferenceImages();
+                if (referenceImages.length > 0) {
+                    addLog(`已加载 ${referenceImages.length} 张参考图片`);
+                }
+            } catch (e) {
+                console.error('加载参考图片失败:', e);
+                referenceImages = [];
+            }
+        }
+        
+        // 删除单张参考图片
+        async function deleteReferenceImage(id) {
+            await deleteFromDB('referenceImages', id);
+            referenceImages = referenceImages.filter(img => img.id !== id);
+            renderReferenceImages();
+            addLog('参考图已删除');
+        }
+        
+        // 保存到 localStorage（小数据）
+        function saveToStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                console.error('保存失败:', e);
+            }
+        }
+        
+        // 从 localStorage 读取
+        function loadFromStorage(key, defaultValue = null) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error('读取失败:', e);
+                return defaultValue;
+            }
+        }
+        
+        // 检查 IndexedDB 存储使用情况
+        async function checkStorageUsage() {
+            if (!db) await initDB();
+            try {
+                const allImages = await loadFromDB('referenceImages');
+                let totalSize = 0;
+                for (const img of allImages) {
+                    if (img.dataUrl) {
+                        totalSize += img.dataUrl.length * 2; // UTF-16
+                    }
+                }
+                const usedMB = (totalSize / 1024 / 1024).toFixed(2);
+                console.log(`IndexedDB 参考图片使用: ${usedMB} MB (${allImages.length} 张)`);
+                return usedMB;
+            } catch (e) {
+                return '0.00';
+            }
+        }
+        
+        // 保存参考图片
+        function saveReferenceImages() {
+            // 保存前检查存储空间
+            const usedMB = checkStorageUsage();
+            if (parseFloat(usedMB) > 8) { // 如果超过 8MB，清理旧图片
+                cleanupOldReferenceImages();
+            }
+            saveToStorage(STORAGE_KEYS.REFERENCE_IMAGES, referenceImages);
+        }
+        
+        // 加载参考图片
+        function loadReferenceImages() {
+            const saved = loadFromStorage(STORAGE_KEYS.REFERENCE_IMAGES, []);
+            referenceImages = saved;
+            renderReferenceImages();
+            if (referenceImages.length > 0) {
+                addLog(`已加载 ${referenceImages.length} 张参考图片`);
+            }
+        }
+        
+        // 保存 Prompt 库
+        function savePromptLibraries() {
+            saveToStorage(STORAGE_KEYS.IMAGE_PROMPT_LIBRARY, imagePromptLibrary);
+            saveToStorage(STORAGE_KEYS.TEXT_PROMPT_LIBRARY, textPromptLibrary);
+        }
+        
+        // 加载 Prompt 库
+        function loadPromptLibraries() {
+            const savedImagePrompts = loadFromStorage(STORAGE_KEYS.IMAGE_PROMPT_LIBRARY);
+            const savedTextPrompts = loadFromStorage(STORAGE_KEYS.TEXT_PROMPT_LIBRARY);
+            
+            if (savedImagePrompts && savedImagePrompts.length > 0) {
+                imagePromptLibrary = savedImagePrompts;
+            }
+            if (savedTextPrompts && savedTextPrompts.length > 0) {
+                textPromptLibrary = savedTextPrompts;
+            }
+            
+            renderImagePromptLibrary();
+            renderTextPromptLibrary();
+        }
+        
+        // 保存生成的内容
+        function saveGeneratedContent() {
+            saveToStorage(STORAGE_KEYS.GENERATED_IMAGES, generatedImages);
+            saveToStorage(STORAGE_KEYS.GENERATED_TEXTS, generatedTexts);
+            saveToStorage(STORAGE_KEYS.MATCHED_PAIRS, matchedPairs);
+        }
+        
+        // 加载生成的内容
+        function loadGeneratedContent() {
+            const savedImages = loadFromStorage(STORAGE_KEYS.GENERATED_IMAGES, []);
+            const savedTexts = loadFromStorage(STORAGE_KEYS.GENERATED_TEXTS, []);
+            const savedPairs = loadFromStorage(STORAGE_KEYS.MATCHED_PAIRS, []);
+            
+            generatedImages = savedImages;
+            generatedTexts = savedTexts;
+            matchedPairs = savedPairs;
+            
+            updateBadges();
+        }
+        
+        // 页面切换
+        function switchPage(pageId) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            
+            event.target.closest('.nav-item').classList.add('active');
+            document.getElementById('page-' + pageId).classList.add('active');
+            
+            if (pageId === 'drafts') {
+                renderDrafts();
+            } else if (pageId === 'publish') {
+                renderPublishList();
+            } else if (pageId === 'mcp-config') {
+                checkMcpStatus();
+            }
+        }
+        
+        // 日志
+        function addLog(message, type = 'info') {
+            const time = new Date().toLocaleTimeString('zh-CN');
+            console.log(`[${time}] ${message}`);
+        }
+        
+        // ========== 图像生成 ==========
+        function insertPrompt(template) {
+            const prompts = {
+                '水果礼盒': '精美水果礼盒，包含红苹果、青提、橙子等多种水果，白色背景，专业摄影风格，高清细节',
+                '夏日果篮': '夏日清爽果篮，西瓜、哈密瓜、葡萄等热带水果，竹编篮子，自然光线，清新风格',
+                '有机水果': '有机健康水果系列，绿色背景，新鲜有机苹果、蓝莓、草莓，自然光，健康生活方式',
+                '节日限定': '节日限定水果礼盒，精美包装，红色丝带装饰，多种高端水果组合，节日氛围'
+            };
+            const textarea = document.getElementById('img-prompt');
+            const current = textarea.value;
+            textarea.value = current ? current + '\n' + prompts[template] : prompts[template];
+        }
+        
+        function uploadReferenceImage() {
+            document.getElementById('ref-image-upload').click();
+        }
+        
+        function handleRefImageUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const name = prompt(`为参考图 #${index + 1} 命名:`, file.name.replace(/\.[^/.]+$/, ''));
+                    if (name) {
+                        referenceImages.push({
+                            id: Date.now() + index,
+                            name: name,
+                            dataUrl: e.target.result,
+                            uploadTime: new Date().toISOString()
+                        });
+                        saveReferenceImages();
+                        renderReferenceImages();
+                        addLog(`参考图已添加: ${name}`);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // 清空 input，允许重复上传相同文件
+            event.target.value = '';
+        }
+        
+        function renderReferenceImages() {
+            const grid = document.getElementById('image-library');
+            const selectedCount = selectedReferenceImages.size;
+            
+            let html = `
+                <div class="library-item library-item-add" onclick="uploadReferenceImage()">
+                    <div style="font-size: 1.5rem; margin-bottom: 4px;">+</div>
+                    <div style="font-size: 0.8rem;">上传参考图</div>
+                </div>
+            `;
+            
+            if (referenceImages.length === 0) {
+                html += `<div style="grid-column: 2/-1; text-align: center; padding: 20px; color: #999;">暂无参考图片</div>`;
+            } else {
+                referenceImages.forEach((img, idx) => {
+                    const isSelected = selectedReferenceImages.has(idx);
+                    html += `
+                        <div class="library-item image-item ${isSelected ? 'selected' : ''}" style="position: relative;">
+                            <div onclick="toggleReferenceImage(${idx})" style="cursor: pointer;">
+                                <div style="position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; background: ${isSelected ? '#43e97b' : 'rgba(255,255,255,0.9)'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10;">
+                                    ${isSelected ? '✓' : ''}
+                                </div>
+                                <img src="${img.dataUrl}" alt="${img.name}" style="${isSelected ? 'border: 3px solid #43e97b;' : ''}">
+                                <div class="library-item-name">${img.name}</div>
+                            </div>
+                            <div class="library-item-actions">
+                                <button class="library-item-btn edit" onclick="event.stopPropagation(); editReferenceImage(${idx})">✎ 重命名</button>
+                                <button class="library-item-btn delete" onclick="event.stopPropagation(); deleteReferenceImage(${idx})">🗑 删除</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // 添加选择状态提示
+            if (selectedCount > 0) {
+                html += `
+                    <div style="grid-column: 1/-1; background: #e8f5e9; border-radius: 8px; padding: 12px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #2e7d32; font-size: 0.9rem;">✅ 已选择 ${selectedCount} 张参考图片用于生成</span>
+                        <button class="btn btn-sm btn-secondary" onclick="clearSelectedReferences()">清空选择</button>
+                    </div>
+                `;
+            }
+            
+            grid.innerHTML = html;
+        }
+        
+        function editReferenceImage(idx) {
+            const img = referenceImages[idx];
+            if (!img) return;
+            
+            const newName = prompt('图片名称:', img.name);
+            if (newName && newName !== img.name) {
+                img.name = newName;
+                saveReferenceImages();
+                renderReferenceImages();
+                addLog(`已重命名参考图: ${newName}`);
+            }
+        }
+        
+        function deleteReferenceImage(idx) {
+            if (!confirm('确定删除这张参考图吗?')) return;
+            referenceImages.splice(idx, 1);
+            saveReferenceImages();
+            renderReferenceImages();
+            addLog('已删除参考图');
+        }
+        
+        // 选中的参考图片（用于生成）
+        let selectedReferenceImages = new Set();
+        
+        function toggleReferenceImage(idx) {
+            if (selectedReferenceImages.has(idx)) {
+                selectedReferenceImages.delete(idx);
+            } else {
+                selectedReferenceImages.add(idx);
+            }
+            renderReferenceImages();
+            
+            const count = selectedReferenceImages.size;
+            if (count > 0) {
+                addLog(`已选择 ${count} 张参考图片用于生成`);
+            }
+        }
+        
+        function useReferenceImage(name) {
+            // 点击名称时切换选择状态
+            const idx = referenceImages.findIndex(img => img.name === name);
+            if (idx !== -1) {
+                toggleReferenceImage(idx);
+            }
+        }
+        
+        function clearSelectedReferences() {
+            selectedReferenceImages.clear();
+            renderReferenceImages();
+            addLog('已清空参考图片选择');
+        }
+        
+        // 图像生成日志
+        function addImageGenLog(message, type = 'info') {
+            const logDiv = document.getElementById('img-gen-log');
+            const time = new Date().toLocaleTimeString('zh-CN');
+            const color = type === 'error' ? '#ff4757' : type === 'success' ? '#43e97b' : type === 'warn' ? '#ffa502' : '#00ff88';
+            logDiv.innerHTML += `<div style="color: ${color}; margin-bottom: 4px;"><span style="color: #888;">[${time}]</span> ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Kie.ai 图生图 API 调用
+        async function generateImagesWithKie(tasks, apiKey, model, referenceImages) {
+            const KIE_API_BASE = 'https://api.kie.ai';
+            const KIE_UPLOAD_BASE = 'https://kieai.redpandaai.co';
+            
+            let results = [];
+            
+            for (let i = 0; i < tasks.length; i++) {
+                const task = tasks[i];
+                const prompt = task.prompt;
+                addImageGenLog(`\n🎨 [${task.index}/${tasks.length}] 开始生成...`);
+                
+                try {
+                    let imageUrl = null;
+                    
+                    // 1. 如果有参考图片，先上传
+                    if (referenceImages.length > 0) {
+                        const refImage = referenceImages[0]; // 使用第一张参考图
+                        addImageGenLog(`📤 上传参考图片: ${refImage.name}...`);
+                        
+                        const uploadRes = await fetch(`${KIE_UPLOAD_BASE}/api/file-base64-upload`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                base64Data: refImage.dataUrl,
+                                uploadPath: 'references',
+                                fileName: `${Date.now()}_ref.jpg`
+                            })
+                        });
+                        
+                        if (!uploadRes.ok) {
+                            throw new Error('参考图片上传失败');
+                        }
+                        
+                        const uploadData = await uploadRes.json();
+                        imageUrl = uploadData.data.fileUrl;
+                        addImageGenLog(`✅ 参考图片已上传`);
+                    }
+                    
+                    // 2. 提交生成任务
+                    addImageGenLog(`⏳ 提交生成任务...`);
+                    
+                    const payload = {
+                        model: model,
+                        prompt: prompt,
+                        instrumental: true,
+                        customMode: false,
+                        callBackUrl: 'https://kie-webhook-relay.vercel.app/api/webhook'
+                    };
+                    
+                    if (imageUrl) {
+                        payload.imageUrl = imageUrl;
+                        addImageGenLog(`🖼️ 使用图生图模式`);
+                    }
+                    
+                    const submitRes = await fetch(`${KIE_API_BASE}/api/v1/generate`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const submitData = await submitRes.json();
+                    
+                    if (submitData.code !== 200) {
+                        throw new Error(`提交失败: ${submitData.msg}`);
+                    }
+                    
+                    const taskId = submitData.data.taskId;
+                    addImageGenLog(`📝 任务ID: ${taskId}`);
+                    
+                    // 3. 轮询等待结果（使用 Kie.ai 官方 recordInfo 端点）
+                    addImageGenLog(`🔄 等待生成完成...`);
+                    addImageGenLog(`📡 轮询任务状态: ${taskId}`);
+                    
+                    let retries = 0;
+                    const maxRetries = 60;
+                    let completed = false;
+                    
+                    while (retries < maxRetries && !completed) {
+                        await new Promise(r => setTimeout(r, 5000)); // 5秒轮询
+                        
+                        // 使用 Kie.ai 官方 recordInfo 端点查询
+                        const queryRes = await fetch(`${KIE_API_BASE}/api/v1/jobs/recordInfo?taskId=${taskId}`, {
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        const queryData = await queryRes.json();
+                        
+                        if (queryData.code === 200 && queryData.data) {
+                            const state = queryData.data.state;
+                            
+                            if (state === 'success') {
+                                addImageGenLog(`✅ 生成成功!`, 'success');
+                                // 解析 resultJson 获取图片 URL
+                                let imageUrl = null;
+                                try {
+                                    const resultObj = JSON.parse(queryData.data.resultJson);
+                                    imageUrl = resultObj.resultUrls ? resultObj.resultUrls[0] : null;
+                                } catch (e) {
+                                    imageUrl = queryData.data.output;
+                                }
+                                results.push({
+                                    id: Date.now() + i,
+                                    url: imageUrl,
+                                    prompt: prompt,
+                                    status: 'done',
+                                    taskId: taskId
+                                });
+                                break;
+                            } else if (state === 'fail') {
+                                throw new Error(`生成失败: ${queryData.data.failMsg || '未知错误'}`);
+                            } else {
+                                addImageGenLog(`⏳ 状态: ${state} (${retries + 1}/${maxRetries})`, 'warn');
+                            }
+                        }
+                        
+                        retries++;
+                    }
+                    
+                    if (retries >= maxRetries) {
+                        throw new Error('生成超时，请检查任务状态');
+                    }
+                    
+                } catch (error) {
+                    addImageGenLog(`❌ 错误: ${error.message}`, 'error');
+                    results.push({
+                        id: Date.now() + i,
+                        url: null,
+                        prompt: prompt,
+                        status: 'error',
+                        error: error.message
+                    });
+                }
+            }
+            
+            return results;
+        }
+        
+        async function generateImages() {
+            const apiProvider = document.getElementById('img-api-provider').value;
+            const apiUrl = document.getElementById('img-api-url').value;
+            const apiKey = document.getElementById('img-api-key').value;
+            const model = document.getElementById('img-model').value;
+            const count = parseInt(document.getElementById('img-count').value) || 4;
+            const promptText = document.getElementById('img-prompt').value.trim();
+            
+            if (!apiKey || !promptText) {
+                alert('请填写 API Key 和 Prompt');
+                return;
+            }
+            
+            // 显示日志区域
+            document.getElementById('img-gen-log-card').style.display = 'block';
+            document.getElementById('img-gen-progress').style.display = 'block';
+            document.getElementById('img-gen-btn').disabled = true;
+            document.getElementById('img-gen-btn').textContent = '生成中...';
+            
+            addImageGenLog('🚀 开始生成图片...');
+            addImageGenLog(`📡 API 提供商: ${apiProvider}`);
+            if (apiProvider === 'banana2') {
+                const resolution = document.getElementById('img-resolution').value;
+                const aspectRatio = document.getElementById('img-aspect-ratio').value;
+                addImageGenLog(`🍌 模型: nano-banana-2 | 分辨率: ${resolution} | 宽高比: ${aspectRatio}`);
+            } else {
+                addImageGenLog(`🤖 使用模型: ${model}`);
+            }
+            
+            // 整个文本框作为一个 prompt，生成数量决定重复次数
+            const prompt = promptText.trim();
+            if (!prompt) {
+                alert('请输入 Prompt');
+                document.getElementById('img-gen-btn').disabled = false;
+                document.getElementById('img-gen-btn').textContent = '🚀 开始生成图片';
+                return;
+            }
+            
+            // 创建生成任务列表（同一个 prompt 重复 count 次）
+            const tasks = [];
+            for (let i = 0; i < count; i++) {
+                tasks.push({
+                    prompt: prompt,
+                    index: i + 1
+                });
+            }
+            
+            addImageGenLog(`📝 Prompt: ${prompt.substring(0, 60)}...`);
+            addImageGenLog(`🔢 生成数量: ${count} 张`);
+            
+            // 获取选中的参考图片
+            const selectedImages = Array.from(selectedReferenceImages).map(idx => referenceImages[idx]).filter(Boolean);
+            if (selectedImages.length > 0) {
+                addImageGenLog(`📎 使用参考图片: ${selectedImages.length} 张`);
+            }
+            
+            let results = [];
+            
+            try {
+                // 使用上面已经定义好的 selectedImages，不要重新定义
+                
+                if (apiProvider === 'banana2') {
+                    results = await generateImagesWithBanana2(tasks, apiKey, selectedImages);
+                } else if (apiProvider === 'kie') {
+                    results = await generateImagesWithKie(tasks, apiKey, model, selectedImages);
+                } else {
+                    // 其他提供商使用标准 OpenAI 格式
+                    results = await generateImagesWithOpenAI(tasks, apiKey, model, apiUrl);
+                }
+                
+                // 添加到生成的图片列表
+                results.forEach(r => {
+                    if (r.status === 'done') {
+                        generatedImages.push(r);
+                    }
+                });
+                
+            } catch (error) {
+                addImageGenLog(`❌ 生成出错: ${error.message}`, 'error');
+            }
+            
+            // 完成
+            const successCount = results.filter(r => r.status === 'done').length;
+            const failCount = results.filter(r => r.status === 'error').length;
+            
+            document.getElementById('img-gen-progress-bar').style.width = '100%';
+            document.getElementById('img-gen-btn').disabled = false;
+            document.getElementById('img-gen-btn').textContent = '🚀 开始生成图片';
+            
+            updateBadges();
+            addImageGenLog(`\n📊 生成完成: 成功 ${successCount} 张, 失败 ${failCount} 张`, successCount > 0 ? 'success' : 'info');
+            
+            if (successCount > 0) {
+                alert(`✅ 已生成 ${successCount} 张图片！\n请前往"草稿箱"查看。`);
+            } else {
+                alert(`❌ 生成失败，请查看运行日志排查问题。`);
+            }
+        }
+        
+        // OpenAI 格式 API 调用
+        async function generateImagesWithOpenAI(tasks, apiKey, model, apiUrl) {
+            let results = [];
+            
+            for (let i = 0; i < tasks.length; i++) {
+                const task = tasks[i];
+                const prompt = task.prompt;
+                addImageGenLog(`⏳ [${task.index}/${tasks.length}] 正在生成...`);
+                
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: model,
+                            prompt: prompt,
+                            n: 1,
+                            size: "1024x1024"
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`API 错误: ${await response.text()}`);
+                    }
+                    
+                    const data = await response.json();
+                    const url = data.data?.[0]?.url || data.url;
+                    
+                    if (url) {
+                        results.push({
+                            id: Date.now() + i,
+                            url: url,
+                            prompt: prompt,
+                            status: 'done'
+                        });
+                        addImageGenLog(`✅ [${task.index}/${tasks.length}] 生成成功`, 'success');
+                    } else {
+                        throw new Error('返回数据格式异常');
+                    }
+                    
+                } catch (error) {
+                    results.push({
+                        id: Date.now() + i,
+                        url: null,
+                        prompt: prompt,
+                        status: 'error',
+                        error: error.message
+                    });
+                    addImageGenLog(`❌ [${task.index}/${tasks.length}] 失败: ${error.message}`, 'error');
+                }
+            }
+            
+            return results;
+        }
+        
+        // Banana 2 API 调用
+        async function generateImagesWithBanana2(tasks, apiKey, referenceImages) {
+            const KIE_API_BASE = 'https://api.kie.ai';
+            const KIE_UPLOAD_BASE = 'https://kieai.redpandaai.co';
+            
+            // 获取配置
+            const resolution = document.getElementById('img-resolution').value || '2K';
+            const aspectRatio = document.getElementById('img-aspect-ratio').value || 'auto';
+            
+            let results = [];
+            
+            // 调试日志
+            addImageGenLog(`🔍 调试: 接收到 ${referenceImages.length} 张参考图片`);
+            if (referenceImages.length > 0) {
+                addImageGenLog(`🔍 第一张图片: ${referenceImages[0].name}, dataUrl长度: ${referenceImages[0].dataUrl?.length || 0}`);
+            }
+            
+            for (let i = 0; i < tasks.length; i++) {
+                const task = tasks[i];
+                const prompt = task.prompt;
+                addImageGenLog(`\n🍌 [${task.index}/${tasks.length}] 开始生成...`);
+                
+                try {
+                    let imageUrls = [];
+                    
+                    // 1. 上传参考图片
+                    if (referenceImages.length > 0) {
+                        addImageGenLog(`📤 上传 ${referenceImages.length} 张参考图片...`);
+                        
+                        for (let j = 0; j < Math.min(referenceImages.length, 14); j++) {
+                            const refImage = referenceImages[j];
+                            addImageGenLog(`  上传图片 ${j + 1}: ${refImage.name}...`);
+                            
+                            // 检查 dataUrl 是否存在
+                            if (!refImage.dataUrl) {
+                                throw new Error(`图片 ${refImage.name} 没有 dataUrl`);
+                            }
+                            
+                            const uploadRes = await fetch(`${KIE_UPLOAD_BASE}/api/file-base64-upload`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${apiKey}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    base64Data: refImage.dataUrl,
+                                    uploadPath: 'references',
+                                    fileName: `${Date.now()}_${j}.jpg`
+                                })
+                            });
+                            
+                            if (!uploadRes.ok) {
+                                const errorData = await uploadRes.json();
+                                throw new Error(`上传失败: ${errorData.msg || '未知错误'}`);
+                            }
+                            
+                            const uploadData = await uploadRes.json();
+                            addImageGenLog(`  🔍 上传返回: ${JSON.stringify(uploadData).substring(0, 200)}...`);
+                            
+                            const imageUrl = uploadData.data?.downloadUrl || uploadData.data?.fileUrl;
+                            if (!imageUrl) {
+                                throw new Error(`上传返回格式异常: ${JSON.stringify(uploadData)}`);
+                            }
+                            imageUrls.push(imageUrl);
+                            addImageGenLog(`  ✅ 图片 ${j + 1} 上传成功: ${imageUrl.substring(0, 60)}...`);
+                        }
+                        
+                        addImageGenLog(`🔍 所有上传的图片URL: ${JSON.stringify(imageUrls)}`);
+                    }
+                    
+                    // 2. 提交生成任务
+                    addImageGenLog(`⏳ 提交生成任务...`);
+                    addImageGenLog(`🔍 提交时的 imageUrls: ${JSON.stringify(imageUrls)}`);
+                    addImageGenLog(`🔍 imageUrls.length: ${imageUrls.length}`);
+                    
+                    const payload = {
+                        model: 'nano-banana-2',
+                        input: {
+                            prompt: prompt,
+                            resolution: resolution,
+                            aspect_ratio: aspectRatio,
+                            output_format: 'jpg',
+                            google_search: false,
+                            image_input: imageUrls
+                        }
+                    };
+                    
+                    addImageGenLog(`🔍 完整的 payload: ${JSON.stringify(payload).substring(0, 500)}...`);
+                    
+                    const submitRes = await fetch(`${KIE_API_BASE}/api/v1/jobs/createTask`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const submitData = await submitRes.json();
+                    
+                    if (submitData.code !== 200) {
+                        throw new Error(`提交失败: ${submitData.msg}`);
+                    }
+                    
+                    const taskId = submitData.data.taskId;
+                    addImageGenLog(`📝 任务ID: ${taskId}`);
+                    
+                    // 3. 轮询等待结果
+                    addImageGenLog(`🔄 等待生成完成 (分辨率: ${resolution}, 宽高比: ${aspectRatio})...`);
+                    
+                    let retries = 0;
+                    const maxRetries = 60;
+                    let completed = false;
+                    
+                    while (retries < maxRetries && !completed) {
+                        await new Promise(r => setTimeout(r, 5000)); // 5秒轮询
+                        
+                        // 使用正确的端点查询任务状态
+                        const queryRes = await fetch(`${KIE_API_BASE}/api/v1/jobs/recordInfo?taskId=${taskId}`, {
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        const queryData = await queryRes.json();
+                        
+                        if (queryData.code === 200 && queryData.data) {
+                            const state = queryData.data.state;
+                            
+                            if (state === 'success') {
+                                addImageGenLog(`✅ 生成成功!`, 'success');
+                                // 从 resultJson 解析图片 URL
+                                let imageUrl = null;
+                                try {
+                                    const resultObj = JSON.parse(queryData.data.resultJson);
+                                    imageUrl = resultObj.resultUrls ? resultObj.resultUrls[0] : null;
+                                } catch (e) {
+                                    imageUrl = null;
+                                }
+                                if (!imageUrl) {
+                                    throw new Error('无法从结果中解析图片 URL');
+                                }
+                                results.push({
+                                    id: Date.now() + i,
+                                    url: imageUrl,
+                                    prompt: prompt,
+                                    status: 'done',
+                                    taskId: taskId,
+                                    resolution: resolution,
+                                    aspectRatio: aspectRatio
+                                });
+                                completed = true;
+                            } else if (state === 'fail') {
+                                throw new Error(`生成失败: ${queryData.data.failMsg || '未知错误'}`);
+                            } else {
+                                addImageGenLog(`⏳ 状态: ${state} (${retries + 1}/${maxRetries})`, 'warn');
+                            }
+                        }
+                        
+                        retries++;
+                    }
+                    
+                    if (!completed) {
+                        throw new Error('生成超时');
+                    }
+                    
+                } catch (error) {
+                    addImageGenLog(`❌ 错误: ${error.message}`, 'error');
+                    results.push({
+                        id: Date.now() + i,
+                        url: null,
+                        prompt: prompt,
+                        status: 'error',
+                        error: error.message
+                    });
+                }
+            }
+            
+            return results;
+        }
+        
+        // ========== 文本生成 ==========
+        function insertTextPrompt(template) {
+            const prompts = {
+                '促销文案': '写一个关于水果店限时促销的小红书文案，强调价格优势和新鲜度，吸引用户下单',
+                '种草文案': '写一篇水果种草文案，分享真实购买体验，突出水果品质和口感，适合小红书风格',
+                '节日文案': '写一个节日主题水果礼盒推广文案，强调送礼场景和心意表达',
+                '科普文案': '写一篇水果科普文案，介绍某种水果的营养价值和挑选技巧'
+            };
+            const textarea = document.getElementById('text-prompt');
+            const current = textarea.value;
+            textarea.value = current ? current + '\n' + prompts[template] : prompts[template];
+        }
+        
+        async function generateTexts() {
+            const apiUrl = document.getElementById('text-api-url').value;
+            const apiKey = document.getElementById('text-api-key').value;
+            const model = document.getElementById('text-model').value;
+            const promptText = document.getElementById('text-prompt').value.trim();
+            
+            if (!apiKey || !promptText) {
+                alert('请填写 API Key 和 Prompt');
+                return;
+            }
+            
+            addLog('开始生成文案...');
+            
+            // 整个文本框作为一个 prompt，生成一条文案
+            const prompt = promptText.trim();
+            
+            try {
+                addLog(`📝 调用 API 生成文案...`);
+                
+                const response = await fetch('http://localhost:8081/proxy/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: '你是一个专业的小红书文案写手，擅长写水果店推广文案。文案风格要活泼、有吸引力，适合小红书平台。'
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        temperature: 0.8,
+                        max_tokens: 800
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API 错误: ${await response.text()}`);
+                }
+                
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+                
+                generatedTexts.push({
+                    id: Date.now(),
+                    content: content,
+                    prompt: prompt,
+                    status: 'done'
+                });
+                
+                updateBadges();
+                addLog('✅ 文案生成完成');
+                alert(`✅ 文案生成完成！\n请前往"草稿箱"查看。`);
+                
+            } catch (error) {
+                addLog(`❌ 生成失败: ${error.message}`, 'error');
+                alert('生成失败，请检查 API 配置');
+            }
+        }
+        
+        // ========== 草稿箱 ==========
+        function renderDrafts() {
+            document.getElementById('draft-images-count').textContent = generatedImages.length;
+            document.getElementById('draft-texts-count').textContent = generatedTexts.length;
+            
+            // 渲染图片
+            const imgList = document.getElementById('draft-images-list');
+            if (generatedImages.length === 0) {
+                imgList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <p>暂无图片</p>
+                        <p style="font-size: 0.85rem; margin-top: 8px;">去"图像生成"页面创建</p>
+                    </div>
+                `;
+            } else {
+                imgList.innerHTML = generatedImages.map((img, idx) => `
+                    <div class="draft-item ${selectedDraftImages.has(idx) ? 'selected' : ''}" onclick="toggleDraftImage(${idx})">
+                        <input type="checkbox" class="draft-checkbox" ${selectedDraftImages.has(idx) ? 'checked' : ''} onclick="event.stopPropagation()">
+                        <img src="${img.url}" alt="图片 ${idx + 1}">
+                        <div style="font-size: 0.75rem; color: #666;">${img.prompt.substring(0, 40)}...</div>
+                    </div>
+                `).join('');
+            }
+            
+            // 渲染文案
+            const txtList = document.getElementById('draft-texts-list');
+            if (generatedTexts.length === 0) {
+                txtList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <p>暂无文案</p>
+                        <p style="font-size: 0.85rem; margin-top: 8px;">去"文本生成"页面创建</p>
+                    </div>
+                `;
+            } else {
+                txtList.innerHTML = generatedTexts.map((txt, idx) => `
+                    <div class="draft-item ${selectedDraftTexts.has(idx) ? 'selected' : ''}" onclick="toggleDraftText(${idx})">
+                        <input type="checkbox" class="draft-checkbox" ${selectedDraftTexts.has(idx) ? 'checked' : ''} onclick="event.stopPropagation()">
+                        <div class="draft-item-text">${txt.content}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function toggleDraftImage(idx) {
+            if (selectedDraftImages.has(idx)) {
+                selectedDraftImages.delete(idx);
+            } else {
+                selectedDraftImages.add(idx);
+            }
+            renderDrafts();
+        }
+        
+        function toggleDraftText(idx) {
+            if (selectedDraftTexts.has(idx)) {
+                selectedDraftTexts.delete(idx);
+            } else {
+                selectedDraftTexts.add(idx);
+            }
+            renderDrafts();
+        }
+        
+        function clearSelection() {
+            selectedDraftImages.clear();
+            selectedDraftTexts.clear();
+            renderDrafts();
+            document.getElementById('match-preview').style.display = 'none';
+        }
+        
+        function previewMatch() {
+            const imgIndices = Array.from(selectedDraftImages).sort((a, b) => a - b);
+            const txtIndices = Array.from(selectedDraftTexts).sort((a, b) => a - b);
+            
+            if (imgIndices.length === 0 || txtIndices.length === 0) {
+                alert('请至少选择一张图片和一条文案');
+                return;
+            }
+            
+            // 一一对应匹配
+            const pairs = [];
+            const minLen = Math.min(imgIndices.length, txtIndices.length);
+            for (let i = 0; i < minLen; i++) {
+                pairs.push({
+                    image: generatedImages[imgIndices[i]],
+                    text: generatedTexts[txtIndices[i]]
+                });
+            }
+            
+            const previewDiv = document.getElementById('match-preview');
+            const contentDiv = document.getElementById('match-preview-content');
+            
+            contentDiv.innerHTML = `
+                <p style="margin-bottom: 16px; color: #666;">将生成 ${pairs.length} 组组合：</p>
+                <div class="publish-grid">
+                    ${pairs.map((pair, idx) => `
+                        <div class="publish-item">
+                            <img src="${pair.image.url}" alt="组合 ${idx + 1}">
+                            <div class="publish-content">
+                                <div class="publish-text">${pair.text.content.substring(0, 100)}...</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            previewDiv.style.display = 'block';
+        }
+        
+        function confirmMatch() {
+            const imgIndices = Array.from(selectedDraftImages).sort((a, b) => a - b);
+            const txtIndices = Array.from(selectedDraftTexts).sort((a, b) => a - b);
+            
+            if (imgIndices.length === 0 || txtIndices.length === 0) {
+                alert('请至少选择一张图片和一条文案');
+                return;
+            }
+            
+            const minLen = Math.min(imgIndices.length, txtIndices.length);
+            for (let i = 0; i < minLen; i++) {
+                matchedPairs.push({
+                    id: Date.now() + i,
+                    image: generatedImages[imgIndices[i]],
+                    text: generatedTexts[txtIndices[i]],
+                    selected: false
+                });
+            }
+            
+            updateBadges();
+            alert(`✅ 已确认组合 ${minLen} 组素材！\n请前往"待发布"页面查看。`);
+            
+            // 清空选择
+            selectedDraftImages.clear();
+            selectedDraftTexts.clear();
+            renderDrafts();
+            document.getElementById('match-preview').style.display = 'none';
+        }
+        
+        // ========== 待发布 ==========
+        function renderPublishList() {
+            document.getElementById('publish-total').textContent = matchedPairs.length;
+            
+            const list = document.getElementById('publish-list');
+            if (matchedPairs.length === 0) {
+                list.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #999;">
+                        <p>暂无待发布内容</p>
+                        <p style="font-size: 0.9rem; margin-top: 8px;">去"草稿箱"页面组合素材</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = matchedPairs.map((pair, idx) => `
+                <div class="publish-item ${pair.selected ? 'selected' : ''}" onclick="togglePublishItem(${idx})">
+                    <img src="${pair.image.url}" alt="发布项 ${idx + 1}">
+                    <div class="publish-content">
+                        <div style="font-size: 0.75rem; color: #666; margin-bottom: 8px;">
+                            ${pair.selected ? '✓ 已选择' : '点击选择'}
+                        </div>
+                        <div class="publish-text">${pair.text.content}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function togglePublishItem(idx) {
+            matchedPairs[idx].selected = !matchedPairs[idx].selected;
+            renderPublishList();
+        }
+        
+        function selectAllPublish() {
+            const allSelected = matchedPairs.every(p => p.selected);
+            matchedPairs.forEach(p => p.selected = !allSelected);
+            renderPublishList();
+        }
+        
+        async function publishToXiaohongshu() {
+            const selected = matchedPairs.filter(p => p.selected);
+            if (selected.length === 0) {
+                alert('请先选择要发布的内容');
+                return;
+            }
+            
+            // 检查 MCP 状态
+            const status = await checkMcpStatus(true);
+            if (!status) {
+                alert('小红书 MCP 服务未连接，请先启动服务\n\n前往"小红书 MCP"配置页面查看详情');
+                return;
+            }
+            
+            if (!confirm(`确认发布 ${selected.length} 条内容到小红书？`)) {
+                return;
+            }
+            
+            addLog(`开始发布 ${selected.length} 条内容...`);
+            
+            // 调用 MCP 客户端发布
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (let i = 0; i < selected.length; i++) {
+                const item = selected[i];
+                addLog(`正在发布 ${i + 1}/${selected.length}: ${item.text.content.substring(0, 30)}...`);
+                
+                try {
+                    // 调用后端代理发布（设置120秒超时）
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 120000);
+                    
+                    const response = await fetch('http://localhost:8081/proxy/xhs/publish', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: item.text.content.substring(0, 20) + '...',
+                            content: item.text.content,
+                            imageUrl: item.image.url
+                        }),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        successCount++;
+                        addLog(`✅ 发布成功: ${i + 1}`, 'success');
+                    } else {
+                        const errorData = await response.json().catch(() => ({}));
+                        failCount++;
+                        addLog(`❌ 发布失败: ${i + 1} - ${errorData.error || '未知错误'}`, 'error');
+                    }
+                } catch (error) {
+                    failCount++;
+                    if (error.name === 'AbortError') {
+                        addLog(`❌ 发布超时: ${i + 1} - 请求超过120秒`, 'error');
+                    } else {
+                        addLog(`❌ 发布出错: ${i + 1} - ${error.message}`, 'error');
+                    }
+                }
+            }
+            
+            alert(`✅ 发布完成！\n成功: ${successCount} 条\n失败: ${failCount} 条`);
+            addLog(`发布完成: 成功 ${successCount}, 失败 ${failCount}`);
+        }
+        
+        // ========== MCP 配置 ==========
+        async function checkMcpStatus(silent = false) {
+            const dot = document.getElementById('mcp-status-dot');
+            const title = document.getElementById('mcp-status-title');
+            const desc = document.getElementById('mcp-status-desc');
+            const account = document.getElementById('mcp-account');
+            const lastCheck = document.getElementById('mcp-last-check');
+            
+            try {
+                const response = await fetch('http://localhost:18060/health');
+                const data = await response.json();
+                
+                if (data.success && data.data.status === 'healthy') {
+                    dot.classList.add('online');
+                    title.textContent = '服务在线';
+                    desc.textContent = '小红书 MCP 服务运行正常';
+                    account.textContent = data.data.account || '-';
+                    lastCheck.textContent = new Date().toLocaleTimeString('zh-CN');
+                    if (!silent) addLog('MCP 服务检查: 在线');
+                    return true;
+                }
+            } catch (e) {
+                dot.classList.remove('online');
+                title.textContent = '服务离线';
+                desc.textContent = '无法连接到 MCP 服务';
+                account.textContent = '-';
+                lastCheck.textContent = new Date().toLocaleTimeString('zh-CN');
+                if (!silent) addLog('MCP 服务检查: 离线');
+            }
+            return false;
+        }
+        
+        function startMcpServer() {
+            alert('请在终端执行以下命令启动服务：\n\ncd ~/.openclaw/workspace/skills/xiaohongshu-mcp\n./xiaohongshu-mcp-darwin-arm64');
+        }
+        
+        // ========== 工具函数 ==========
+        function updateBadges() {
+            const draftCount = generatedImages.length + generatedTexts.length;
+            document.getElementById('draft-badge').textContent = draftCount;
+            document.getElementById('publish-badge').textContent = matchedPairs.length;
+        }
+        
+        // 初始化 - 从 localStorage 加载数据
+        loadPromptLibraries();
+        loadReferenceImages();
+        loadGeneratedContent();
+        updateBadges();
+        checkMcpStatus();
+        
+        // 设置 prompt 输入框光标追踪
+        setupCursorTracking();
+        
+        // 定时检查 MCP 状态（每 30 秒）
+        setInterval(() => checkMcpStatus(true), 30000);
+        
+        // 页面可见性变化时检查
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                checkMcpStatus(true);
+            }
+        });
+        
+        // API 提供商切换
+        function switchImageProvider() {
+            const provider = document.getElementById('img-api-provider').value;
+            const urlInput = document.getElementById('img-api-url');
+            const modelInput = document.getElementById('img-model');
+            const hint = document.getElementById('api-hint');
+            
+            if (provider === 'banana2') {
+                urlInput.value = 'https://api.kie.ai';
+                modelInput.value = 'nano-banana-2';
+                hint.textContent = '支持文生图和图生图，参考图片会自动上传并用于生成';
+                hint.parentElement.style.background = '#e8f5e9';
+                hint.parentElement.style.color = '#2e7d32';
+            } else if (provider === 'kie') {
+                urlInput.value = 'https://api.kie.ai';
+                modelInput.value = 'gpt-image-1';
+                hint.textContent = '支持图生图，参考图片会自动上传并用于生成';
+                hint.parentElement.style.background = '#e8f5e9';
+                hint.parentElement.style.color = '#2e7d32';
+            } else if (provider === 'yunwu') {
+                urlInput.value = 'https://yunwu.ai/v1/images/generations';
+                modelInput.value = 'dall-e-3';
+                hint.textContent = 'OpenAI 格式 API';
+                hint.parentElement.style.background = '#f8f9fa';
+                hint.parentElement.style.color = '#666';
+            }
+        }
+        
+        // ========== Prompt 库管理 ==========
+        function renderImagePromptLibrary() {
+            const grid = document.getElementById('prompt-library');
+            let html = `
+                <div class="library-item library-item-add" onclick="addImagePrompt()">
+                    <div style="font-size: 1.5rem; margin-bottom: 4px;">+</div>
+                    <div style="font-size: 0.8rem;">添加模板</div>
+                </div>
+            `;
+            
+            imagePromptLibrary.forEach(item => {
+                html += `
+                    <div class="library-item text-item">
+                        <div onclick="useImagePrompt(${item.id})" style="cursor: pointer;">
+                            <div>${item.name}</div>
+                            <div class="library-item-name">${item.content.substring(0, 30)}...</div>
+                        </div>
+                        <div class="library-item-actions">
+                            <button class="library-item-btn edit" onclick="editImagePrompt(${item.id})">✎ 编辑</button>
+                            <button class="library-item-btn delete" onclick="deleteImagePrompt(${item.id})">🗑 删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        function renderTextPromptLibrary() {
+            const grid = document.getElementById('text-prompt-library');
+            let html = `
+                <div class="library-item library-item-add" onclick="addTextPrompt()">
+                    <div style="font-size: 1.5rem; margin-bottom: 4px;">+</div>
+                    <div style="font-size: 0.8rem;">添加模板</div>
+                </div>
+            `;
+            
+            textPromptLibrary.forEach(item => {
+                html += `
+                    <div class="library-item text-item">
+                        <div onclick="useTextPrompt(${item.id})" style="cursor: pointer;">
+                            <div>${item.name}</div>
+                            <div class="library-item-name">${item.content.substring(0, 30)}...</div>
+                        </div>
+                        <div class="library-item-actions">
+                            <button class="library-item-btn edit" onclick="editTextPrompt(${item.id})">✎ 编辑</button>
+                            <button class="library-item-btn delete" onclick="deleteTextPrompt(${item.id})">🗑 删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        function addImagePrompt() {
+            const name = prompt('模板名称:');
+            if (!name) return;
+            const content = prompt('Prompt 内容:');
+            if (!content) return;
+            
+            imagePromptLibrary.push({
+                id: Date.now(),
+                name: name,
+                content: content
+            });
+            savePromptLibraries();
+            renderImagePromptLibrary();
+            addLog(`已添加图像 Prompt 模板: ${name}`);
+        }
+        
+        function addTextPrompt() {
+            const name = prompt('模板名称:');
+            if (!name) return;
+            const content = prompt('Prompt 内容:');
+            if (!content) return;
+            
+            textPromptLibrary.push({
+                id: Date.now(),
+                name: name,
+                content: content
+            });
+            savePromptLibraries();
+            renderTextPromptLibrary();
+            addLog(`已添加文本 Prompt 模板: ${name}`);
+        }
+        
+        function editImagePrompt(id) {
+            const item = imagePromptLibrary.find(p => p.id === id);
+            if (!item) return;
+            
+            const newName = prompt('模板名称:', item.name);
+            if (newName === null) return;
+            const newContent = prompt('Prompt 内容:', item.content);
+            if (newContent === null) return;
+            
+            item.name = newName;
+            item.content = newContent;
+            savePromptLibraries();
+            renderImagePromptLibrary();
+            addLog(`已更新图像 Prompt 模板: ${newName}`);
+        }
+        
+        function editTextPrompt(id) {
+            const item = textPromptLibrary.find(p => p.id === id);
+            if (!item) return;
+            
+            const newName = prompt('模板名称:', item.name);
+            if (newName === null) return;
+            const newContent = prompt('Prompt 内容:', item.content);
+            if (newContent === null) return;
+            
+            item.name = newName;
+            item.content = newContent;
+            savePromptLibraries();
+            renderTextPromptLibrary();
+            addLog(`已更新文本 Prompt 模板: ${newName}`);
+        }
+        
+        function deleteImagePrompt(id) {
+            if (!confirm('确定删除这个模板吗?')) return;
+            imagePromptLibrary = imagePromptLibrary.filter(p => p.id !== id);
+            savePromptLibraries();
+            renderImagePromptLibrary();
+            addLog('已删除图像 Prompt 模板');
+        }
+        
+        function deleteTextPrompt(id) {
+            if (!confirm('确定删除这个模板吗?')) return;
+            textPromptLibrary = textPromptLibrary.filter(p => p.id !== id);
+            savePromptLibraries();
+            renderTextPromptLibrary();
+            addLog('已删除文本 Prompt 模板');
+        }
+        
+        function useImagePrompt(id) {
+            const item = imagePromptLibrary.find(p => p.id === id);
+            if (item) {
+                const textarea = document.getElementById('img-prompt');
+                const current = textarea.value;
+                textarea.value = current ? current + '\n' + item.content : item.content;
+                addLog(`已插入 Prompt: ${item.name}`);
+            }
+        }
+        
+        function useTextPrompt(id) {
+            const item = textPromptLibrary.find(p => p.id === id);
+            if (item) {
+                const textarea = document.getElementById('text-prompt');
+                const current = textarea.value;
+                textarea.value = current ? current + '\n' + item.content : item.content;
+                addLog(`已插入 Prompt: ${item.name}`);
+            }
+        }
+        
+        // 兼容旧函数
+        function insertPrompt(template) {
+            const item = imagePromptLibrary.find(p => p.name.includes(template));
+            if (item) useImagePrompt(item.id);
+        }
+        
+        function insertTextPrompt(template) {
+            const item = textPromptLibrary.find(p => p.name.includes(template));
+            if (item) useTextPrompt(item.id);
+        }
+        
+        // ========== 手动添加图片到草稿箱 ==========
+        function addManualImageToDrafts() {
+            const urlInput = document.getElementById('manual-image-url');
+            const promptInput = document.getElementById('manual-image-prompt');
+            
+            const url = urlInput.value.trim();
+            const prompt = promptInput.value.trim() || '手动添加的图片';
+            
+            if (!url) {
+                alert('请输入图片 URL');
+                return;
+            }
+            
+            // 验证 URL 格式
+            try {
+                new URL(url);
+            } catch (e) {
+                alert('请输入有效的图片 URL');
+                return;
+            }
+            
+            // 添加到生成的图片列表
+            generatedImages.push({
+                id: Date.now(),
+                url: url,
+                prompt: prompt,
+                status: 'done',
+                taskId: 'manual-' + Date.now()
+            });
+            
+            // 保存到 localStorage
+            saveGeneratedContent();
+            
+            // 更新徽章
+            updateBadges();
+            
+            // 清空输入
+            urlInput.value = '';
+            promptInput.value = '';
+            
+            alert('✅ 图片已添加到草稿箱！\n请前往"草稿箱"页面查看。');
+            
+            addLog(`手动添加图片到草稿箱: ${url.substring(0, 50)}...`);
+        }
+        
+        // ========== 图片选择器（插入到光标位置）==========
+        
+        // 设置光标追踪
+        function setupCursorTracking() {
+            const textarea = document.getElementById('img-prompt');
+            if (!textarea) return;
+            
+            // 监听各种可能改变光标位置的事件
+            textarea.addEventListener('keyup', saveCursorPosition);
+            textarea.addEventListener('click', saveCursorPosition);
+            textarea.addEventListener('focus', saveCursorPosition);
+            textarea.addEventListener('input', saveCursorPosition);
+            textarea.addEventListener('mouseup', saveCursorPosition);
+            textarea.addEventListener('select', saveCursorPosition);
+        }
+        
+        // 保存当前光标位置
+        function saveCursorPosition() {
+            const textarea = document.getElementById('img-prompt');
+            if (!textarea) return;
+            lastCursorPosition = textarea.selectionStart;
+        }
+        
+        // 切换图片选择器显示/隐藏
+        function toggleImagePicker() {
+            const picker = document.getElementById('image-picker-popup');
+            if (!picker) return;
+            
+            if (picker.style.display === 'none') {
+                picker.style.display = 'block';
+                renderImagePicker();
+                // 保存当前光标位置
+                saveCursorPosition();
+            } else {
+                picker.style.display = 'none';
+            }
+        }
+        
+        // 渲染图片选择器内容
+        function renderImagePicker() {
+            const grid = document.getElementById('image-picker-grid');
+            const emptyMsg = document.getElementById('image-picker-empty');
+            
+            if (!grid || !emptyMsg) return;
+            
+            if (referenceImages.length === 0) {
+                grid.style.display = 'none';
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            emptyMsg.style.display = 'none';
+            
+            grid.innerHTML = referenceImages.map((img, idx) => `
+                <div onclick="insertImageAtCursor(${idx})" style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid transparent; transition: all 0.2s; position: relative;" onmouseover="this.style.borderColor='#667eea'" onmouseout="this.style.borderColor='transparent'">
+                    <img src="${img.dataUrl}" alt="${img.name}" style="width: 100%; height: 70px; object-fit: cover; display: block;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 0.7rem; padding: 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${img.name}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 在光标位置插入图片标记
+        function insertImageAtCursor(imageIndex) {
+            const textarea = document.getElementById('img-prompt');
+            const img = referenceImages[imageIndex];
+            
+            if (!textarea || !img) return;
+            
+            // 获取当前内容和光标位置
+            const content = textarea.value;
+            const cursorPos = lastCursorPosition;
+            
+            // 构建插入文本（使用特殊标记格式，方便后续处理）
+            const insertText = `[参考图: ${img.name}]`;
+            
+            // 在光标位置插入文本
+            const before = content.substring(0, cursorPos);
+            const after = content.substring(cursorPos);
+            
+            // 智能添加空格：如果光标前后没有空格，自动添加
+            const needSpaceBefore = before.length > 0 && !before.endsWith(' ') && !before.endsWith('\n');
+            const needSpaceAfter = after.length > 0 && !after.startsWith(' ') && !after.startsWith('\n');
+            
+            const finalInsert = (needSpaceBefore ? ' ' : '') + insertText + (needSpaceAfter ? ' ' : '');
+            
+            // 更新内容
+            textarea.value = before + finalInsert + after;
+            
+            // 更新光标位置到插入文本之后
+            const newCursorPos = cursorPos + finalInsert.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+            lastCursorPosition = newCursorPos;
+            
+            // 重新聚焦到输入框
+            textarea.focus();
+            
+            // 关闭选择器
+            toggleImagePicker();
+            
+            // 添加日志
+            addLog(`已插入参考图标记: ${img.name}`);
+            addImageGenLog(`📎 已插入参考图: ${img.name}`);
+        }
+        
+        // 点击页面其他地方关闭图片选择器
+        document.addEventListener('click', function(e) {
+            const picker = document.getElementById('image-picker-popup');
+            const btn = e.target.closest('button');
+            const isPickerClick = e.target.closest('#image-picker-popup');
+            
+            if (picker && picker.style.display === 'block' && !isPickerClick && !(btn && btn.textContent.includes('插入参考图'))) {
+                picker.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
